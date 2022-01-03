@@ -4,6 +4,10 @@ import ChannelIcon from "../common/ChannelIcon";
 import HomeIcon from "@material-ui/icons/Home";
 import styled from "../../styles/themed-components";
 import AddServer from "../common/AddServer";
+import { useQuery, useReactiveVar } from "@apollo/client";
+import { curTabVar, userChannelsVar } from "../../store/main.state";
+import { getJoinChannelsQuery } from "../../__generated__/getJoinChannelsQuery";
+import { GET_JOIN_CHANNELS } from "./gql/tab.gql";
 
 const Divider = styled.div`
   width: 40px;
@@ -12,15 +16,27 @@ const Divider = styled.div`
   margin: 5px auto;
 `;
 
-type ITab = {
-  curTab: number;
-  tabHandler: (id: number) => void;
-  isAdd: boolean;
-  isAddHandler: (state: boolean) => void;
-};
+type ITab = {};
 
-const Tab: React.FC<ITab> = ({ curTab, tabHandler, isAdd, isAddHandler }) => {
-  const channels = [0];
+const Tab: React.FC<ITab> = () => {
+  const curTab = useReactiveVar(curTabVar);
+  const userChannels = useReactiveVar(userChannelsVar);
+  const tabHandler = (id: number) => {
+    curTabVar(id);
+  };
+  useQuery<getJoinChannelsQuery>(GET_JOIN_CHANNELS, {
+    onCompleted: (data) => {
+      const { ok, message, channels } = data.getJoinChannels;
+      if (ok) {
+        userChannelsVar(channels || []);
+      } else {
+        console.log(message);
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
   return (
     <>
       <ChannelIcon
@@ -30,16 +46,16 @@ const Tab: React.FC<ITab> = ({ curTab, tabHandler, isAdd, isAddHandler }) => {
         activeHandler={tabHandler}
       />
       <Divider />
-      {channels.map((x, i) => (
+      {userChannels?.map((x, i) => (
         <ChannelIcon
-          key={x}
-          id={x}
-          title="테스트"
+          key={i}
+          id={x.id}
+          title={x.name}
           activeChannel={curTab}
           activeHandler={tabHandler}
         />
       ))}
-      <AddServer active={isAdd} activeHandler={isAddHandler} />
+      <AddServer />
     </>
   );
 };

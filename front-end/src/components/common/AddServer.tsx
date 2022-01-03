@@ -1,24 +1,8 @@
 import React from "react";
 import styled, { css, keyframes } from "../../styles/themed-components";
 import AddIcon from "@material-ui/icons/Add";
-
-const barHoverAnim = keyframes`
-    from {
-        height:0px;
-    }
-    to{
-        height:30px;
-    }
-`;
-
-const barFocusAnim = keyframes`
-    from {
-        height:30px;
-    }
-    to{
-        height:60px;
-    }
-`;
+import { isCreateChannelOpenVar } from "../../store/create-channel.state";
+import { useReactiveVar } from "@apollo/client";
 
 const Container = styled.div<{ active: boolean }>`
   width: 100%;
@@ -30,9 +14,6 @@ const Container = styled.div<{ active: boolean }>`
   ${(props) =>
     props.active
       ? css`
-          .bar {
-            animation: ${barFocusAnim} 0.3s forwards;
-          }
           .icon {
             border-radius: 40%;
             background-color: ${({ theme }) => theme.color.online};
@@ -41,9 +22,6 @@ const Container = styled.div<{ active: boolean }>`
         `
       : css`
           :hover {
-            .bar {
-              animation: ${barHoverAnim} 0.3s forwards;
-            }
             .icon {
               border-radius: 40%;
               background-color: ${({ theme }) => theme.color.online};
@@ -78,21 +56,20 @@ const Icon = styled.div`
   color: ${({ theme }) => theme.color.online};
   white-space: nowrap;
   overflow: hidden;
+  transition: 0.2s;
 `;
 
-type IAddServer = {
-  active: boolean;
-  activeHandler: (state: boolean) => void;
-};
+type IAddServer = {};
 
-const AddServer: React.FC<IAddServer> = ({ active, activeHandler }) => {
+const AddServer: React.FC<IAddServer> = () => {
+  const isOpen = useReactiveVar(isCreateChannelOpenVar);
   return (
-    <Container active={active}>
+    <Container active={isOpen}>
       <SelectBar className="bar" />
       <Icon
         className="icon"
         onClick={() => {
-          activeHandler(true);
+          isCreateChannelOpenVar(true);
         }}
       >
         <AddIcon style={{ fontSize: "30px" }} />

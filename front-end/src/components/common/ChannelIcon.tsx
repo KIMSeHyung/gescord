@@ -78,6 +78,7 @@ const Icon = styled.div`
   color: white;
   white-space: nowrap;
   overflow: hidden;
+  transition: 0.2s;
 `;
 
 type IChannelIcon = {

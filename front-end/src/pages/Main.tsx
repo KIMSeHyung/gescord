@@ -3,9 +3,11 @@ import Tab from "../components/Tab";
 import Home from "../components/Home";
 import styled from "../styles/themed-components";
 import Channel from "../components/Channel";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useReactiveVar } from "@apollo/client";
 import { getCurrentUserQuery } from "../__generated__/getCurrentUserQuery";
 import { currentUserVar } from "../store/users.state";
+import CreateChannelDialog from "../components/CreateChannelDialog";
+import { curTabVar } from "../store/main.state";
 
 const Container = styled.div`
   width: 100%;
@@ -65,8 +67,7 @@ const GET_CURRENT_USER = gql`
 `;
 
 const Main: React.FC = () => {
-  const [curTab, setCurTab] = useState<number>(-1);
-  const [isAdd, setIsAdd] = useState<boolean>(false);
+  const curTab = useReactiveVar(curTabVar);
   useQuery<getCurrentUserQuery>(GET_CURRENT_USER, {
     onCompleted: (data) => {
       const { ok, message, user } = data.currentUser;
@@ -78,27 +79,15 @@ const Main: React.FC = () => {
     },
     onError: (error) => {},
   });
-
-  const tabHandler = (id: number) => {
-    setCurTab(id);
-  };
-
-  const addHandler = (state: boolean) => {
-    setIsAdd(state);
-  };
   return (
     <Container>
+      <CreateChannelDialog />
       <TopSection>
         <TopLabel>GESCORD</TopLabel>
       </TopSection>
       <ContentsSection>
         <TabPannel>
-          <Tab
-            curTab={curTab}
-            tabHandler={tabHandler}
-            isAdd={isAdd}
-            isAddHandler={addHandler}
-          />
+          <Tab />
         </TabPannel>
         <Pages>{curTab === -1 ? <Home /> : <Channel tabId={curTab} />}</Pages>
       </ContentsSection>
