@@ -27,11 +27,7 @@ import {
   CREATE_CHANNEL_MUTATION,
   JOIN_CHANNEL_BY_CODE_MUTATION,
 } from "./gql/create-channel.gql";
-import {
-  curTabVar,
-  IUserChannles,
-  userChannelsVar,
-} from "../../store/main.state";
+import { curTabVar, userChannelsVar } from "../../store/main.state";
 import {
   joinChannelByCodeMutation,
   joinChannelByCodeMutationVariables,

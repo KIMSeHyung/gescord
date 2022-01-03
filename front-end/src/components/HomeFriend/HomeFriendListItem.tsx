@@ -116,7 +116,7 @@ const HomeFriendListItem: React.FC<IHomeFreindListItem> = ({ friend }) => {
         <UserImgBox>
           <UserImg src={DefaultIcon} />
           <OnlineOutline>
-            <OnlineIcon online={true} />
+            <OnlineIcon online={friend?.isActive === activeStatus.ON} />
           </OnlineOutline>
         </UserImgBox>
         <UserInfoBox>

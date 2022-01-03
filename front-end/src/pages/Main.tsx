@@ -1,13 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Tab from "../components/Tab";
 import Home from "../components/Home";
 import styled from "../styles/themed-components";
 import Channel from "../components/Channel";
-import { gql, useQuery, useReactiveVar } from "@apollo/client";
+import {
+  gql,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+  useReactiveVar,
+} from "@apollo/client";
 import { getCurrentUserQuery } from "../__generated__/getCurrentUserQuery";
 import { currentUserVar } from "../store/users.state";
 import CreateChannelDialog from "../components/CreateChannelDialog";
 import { curTabVar } from "../store/main.state";
+import {
+  updateUserActiveStatus,
+  updateUserActiveStatusVariables,
+} from "../__generated__/updateUserActiveStatus";
+import { activeStatus } from "../__generated__/globalTypes";
 
 const Container = styled.div`
   width: 100%;
@@ -67,6 +78,15 @@ const GET_CURRENT_USER = gql`
   }
 `;
 
+const UPDATE_ACTIVE_STATUS = gql`
+  mutation updateUserActiveStatus($status: String!) {
+    updateUserActiveStatus(status: $status) {
+      ok
+      message
+    }
+  }
+`;
+
 const Main: React.FC = () => {
   const curTab = useReactiveVar(curTabVar);
   useQuery<getCurrentUserQuery>(GET_CURRENT_USER, {
@@ -80,6 +100,19 @@ const Main: React.FC = () => {
     },
     onError: (error) => {},
   });
+
+  const [updateActive] = useMutation<
+    updateUserActiveStatus,
+    updateUserActiveStatusVariables
+  >(UPDATE_ACTIVE_STATUS);
+
+  useEffect(() => {
+    updateActive({ variables: { status: activeStatus.ON } });
+    window.addEventListener("beforeunload", () => {
+      updateActive({ variables: { status: activeStatus.OFF } });
+    });
+  }, [updateActive]);
+
   return (
     <Container>
       <CreateChannelDialog />
