@@ -23,8 +23,19 @@ import {
   createChannelMutation,
   createChannelMutationVariables,
 } from "../../__generated__/createChannelMutation";
-import { CREATE_CHANNEL_MUTATION } from "./gql/create-channel.gql";
-import { curTabVar, userChannelsVar } from "../../store/main.state";
+import {
+  CREATE_CHANNEL_MUTATION,
+  JOIN_CHANNEL_BY_CODE_MUTATION,
+} from "./gql/create-channel.gql";
+import {
+  curTabVar,
+  IUserChannles,
+  userChannelsVar,
+} from "../../store/main.state";
+import {
+  joinChannelByCodeMutation,
+  joinChannelByCodeMutationVariables,
+} from "../../__generated__/joinChannelByCodeMutation";
 
 const CustomDialog = styled(Dialog)`
   text-align: center;
@@ -62,6 +73,10 @@ const JoinButton = styled.div`
   font-size: 14px;
   font-weight: 600;
   line-height: 40px;
+  cursor: pointer;
+  :hover {
+    background-color: #545763;
+  }
 `;
 
 const FirstStep: React.FC<{ stepHandler: (s: string) => void }> = ({
@@ -102,7 +117,13 @@ const FirstStep: React.FC<{ stepHandler: (s: string) => void }> = ({
       </List>
       <Bottom>
         이미 초대장을 받으셨나요?
-        <JoinButton>서버 참가하기</JoinButton>
+        <JoinButton
+          onClick={() => {
+            stepHandler("code");
+          }}
+        >
+          서버 참가하기
+        </JoinButton>
       </Bottom>
     </>
   );
@@ -197,6 +218,99 @@ const CreateStep: React.FC<{ stepHandler: (s: string) => void }> = ({
   );
 };
 
+const CodeStep: React.FC<{ stepHandler: (s: string) => void }> = ({
+  stepHandler,
+}) => {
+  const [code, setCode] = useState<string>("");
+  const userChannels = useReactiveVar(userChannelsVar);
+  const closehandler = () => {
+    isCreateChannelOpenVar(false);
+    stepHandler("first");
+  };
+
+  const [joinByCodeMutation, { loading }] = useMutation<
+    joinChannelByCodeMutation,
+    joinChannelByCodeMutationVariables
+  >(JOIN_CHANNEL_BY_CODE_MUTATION, {
+    onCompleted: (data) => {
+      const { ok, message, channel } = data.joinChannelByCode;
+      if (ok) {
+        let isContain = false;
+        for (let i = 0; i < userChannels.length; i++) {
+          if (userChannels[i].id === channel?.id) {
+            isContain = true;
+            break;
+          }
+        }
+        if (!isContain) {
+          userChannelsVar([channel!, ...userChannels]);
+        }
+        curTabVar(channel?.id);
+        closehandler();
+      } else {
+        alert(message);
+        console.log(message);
+      }
+    },
+    onError: (error) => console.log(error),
+  });
+  return (
+    <>
+      <CustomTitle>
+        서버 참가하기
+        <CustomCloseIcon aria-label="close" onClick={closehandler}>
+          <CloseIcon />
+        </CustomCloseIcon>
+        <DialogContent>
+          <DialogContentText>
+            아래에 초대 코드를 입력하여 서버에 참가하세요
+          </DialogContentText>
+          <TextField
+            autoFocus
+            fullWidth
+            label="초대 코드"
+            style={{ marginTop: "10px" }}
+            placeholder={`hTKzmak`}
+            onChange={(e) => {
+              setCode(e.target.value);
+            }}
+          />
+        </DialogContent>
+      </CustomTitle>
+      <Bottom
+        style={{
+          height: "60px",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          color: "black",
+          fontSize: "15px",
+          padding: "20px",
+          fontWeight: "100",
+        }}
+      >
+        <span
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            stepHandler("first");
+          }}
+        >
+          뒤로가기
+        </span>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => {
+            if (code) joinByCodeMutation({ variables: { code } });
+          }}
+          disabled={loading}
+        >
+          서버 참가하기
+        </Button>
+      </Bottom>
+    </>
+  );
+};
+
 type ICreateChannelDialog = {};
 
 const CreateChannelDialog: React.FC<ICreateChannelDialog> = () => {
@@ -214,8 +328,10 @@ const CreateChannelDialog: React.FC<ICreateChannelDialog> = () => {
   const curStep = useMemo(() => {
     if (step === "first") {
       return <FirstStep stepHandler={stepHandler} />;
-    } else {
+    } else if (step === "create") {
       return <CreateStep stepHandler={stepHandler} />;
+    } else {
+      return <CodeStep stepHandler={stepHandler} />;
     }
   }, [step]);
   return (

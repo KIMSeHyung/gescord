@@ -8,6 +8,25 @@ export const CREATE_CHANNEL_MUTATION = gql`
       channel {
         id
         name
+        master {
+          id
+        }
+      }
+    }
+  }
+`;
+
+export const JOIN_CHANNEL_BY_CODE_MUTATION = gql`
+  mutation joinChannelByCodeMutation($code: String!) {
+    joinChannelByCode(code: $code) {
+      ok
+      message
+      channel {
+        id
+        name
+        master {
+          id
+        }
       }
     }
   }

@@ -7,10 +7,16 @@
 // GraphQL mutation operation: createChannelMutation
 // ====================================================
 
+export interface createChannelMutation_createChannel_channel_master {
+  __typename: "User";
+  id: number;
+}
+
 export interface createChannelMutation_createChannel_channel {
   __typename: "JoinChannel";
   id: number;
   name: string;
+  master: createChannelMutation_createChannel_channel_master;
 }
 
 export interface createChannelMutation_createChannel {

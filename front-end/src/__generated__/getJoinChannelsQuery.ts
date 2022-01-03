@@ -7,10 +7,16 @@
 // GraphQL query operation: getJoinChannelsQuery
 // ====================================================
 
+export interface getJoinChannelsQuery_getJoinChannels_channels_master {
+  __typename: "User";
+  id: number;
+}
+
 export interface getJoinChannelsQuery_getJoinChannels_channels {
   __typename: "JoinChannel";
   id: number;
   name: string;
+  master: getJoinChannelsQuery_getJoinChannels_channels_master;
 }
 
 export interface getJoinChannelsQuery_getJoinChannels {

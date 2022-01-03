@@ -8,6 +8,9 @@ export const GET_JOIN_CHANNELS = gql`
       channels {
         id
         name
+        master {
+          id
+        }
       }
     }
   }

@@ -42,6 +42,7 @@ const Tab: React.FC<ITab> = () => {
       <ChannelIcon
         icon={<HomeIcon style={{ color: "white", fontSize: "40px" }} />}
         id={-1}
+        master={-1}
         activeChannel={curTab}
         activeHandler={tabHandler}
       />
@@ -50,6 +51,7 @@ const Tab: React.FC<ITab> = () => {
         <ChannelIcon
           key={i}
           id={x.id}
+          master={x.master.id}
           title={x.name}
           activeChannel={curTab}
           activeHandler={tabHandler}

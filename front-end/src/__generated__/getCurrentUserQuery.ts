@@ -9,6 +9,7 @@
 
 export interface getCurrentUserQuery_currentUser_user {
   __typename: "User";
+  id: number;
   email: string;
   name: string;
   tag: string;

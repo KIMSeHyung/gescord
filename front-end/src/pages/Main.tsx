@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Tab from "../components/Tab";
 import Home from "../components/Home";
 import styled from "../styles/themed-components";
@@ -58,6 +58,7 @@ const GET_CURRENT_USER = gql`
       ok
       message
       user {
+        id
         email
         name
         tag

@@ -1,8 +1,9 @@
 import React from "react";
-import styled, { css, keyframes } from "../../styles/themed-components";
+import styled, { css } from "../../styles/themed-components";
 import AddIcon from "@material-ui/icons/Add";
 import { isCreateChannelOpenVar } from "../../store/create-channel.state";
 import { useReactiveVar } from "@apollo/client";
+import { ContextMenuTrigger } from "react-contextmenu";
 
 const Container = styled.div<{ active: boolean }>`
   width: 100%;
@@ -64,17 +65,19 @@ type IAddServer = {};
 const AddServer: React.FC<IAddServer> = () => {
   const isOpen = useReactiveVar(isCreateChannelOpenVar);
   return (
-    <Container active={isOpen}>
-      <SelectBar className="bar" />
-      <Icon
-        className="icon"
-        onClick={() => {
-          isCreateChannelOpenVar(true);
-        }}
-      >
-        <AddIcon style={{ fontSize: "30px" }} />
-      </Icon>
-    </Container>
+    <ContextMenuTrigger id="contextmenu-add">
+      <Container active={isOpen}>
+        <SelectBar className="bar" />
+        <Icon
+          className="icon"
+          onClick={() => {
+            isCreateChannelOpenVar(true);
+          }}
+        >
+          <AddIcon style={{ fontSize: "30px" }} />
+        </Icon>
+      </Container>
+    </ContextMenuTrigger>
   );
 };
 

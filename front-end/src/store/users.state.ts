@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { getFriendsQuery_getFriends_friends } from "../__generated__/getFriendsQuery";
 
 export type IUser = {
+  id: number;
   email: string;
   name: string;
   tag: string;
