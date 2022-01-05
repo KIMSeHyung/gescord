@@ -3,13 +3,7 @@ import Tab from "../components/Tab";
 import Home from "../components/Home";
 import styled from "../styles/themed-components";
 import Channel from "../components/Channel";
-import {
-  gql,
-  useLazyQuery,
-  useMutation,
-  useQuery,
-  useReactiveVar,
-} from "@apollo/client";
+import { gql, useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { getCurrentUserQuery } from "../__generated__/getCurrentUserQuery";
 import { currentUserVar } from "../store/users.state";
 import CreateChannelDialog from "../components/CreateChannelDialog";

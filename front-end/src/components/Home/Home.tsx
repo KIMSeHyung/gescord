@@ -85,7 +85,7 @@ const Home: React.FC = () => {
             </FriendButton>
 
             <MessageLabelBox>
-              <MessageLabel>개인 메시지</MessageLabel>
+              <MessageLabel>다이렉트 메세지</MessageLabel>
               <MessageLabel style={{ marginLeft: "auto" }}>
                 <AddIcon />
               </MessageLabel>

@@ -46,13 +46,20 @@ const ItemBox = styled.div<{ active: boolean }>`
   margin-left: 20px;
 `;
 
-const AddFriendBox = styled.div`
+const AddFriendBox = styled.div<{ active: boolean }>`
   padding: 8px;
-  color: white;
   font-size: 1.1em;
   border-radius: 5px;
   margin-left: 20px;
-  background-color: #44aa64;
+  ${({ active }) =>
+    active
+      ? css`
+          color: #44aa64;
+        `
+      : css`
+          background-color: #44aa64;
+          color: white;
+        `}
   :hover {
     cursor: pointer;
   }
@@ -106,7 +113,14 @@ const HomeFriendNav: React.FC = () => {
       >
         차단목록
       </ItemBox>
-      <AddFriendBox>친구 추가하기</AddFriendBox>
+      <AddFriendBox
+        active={curTab === 4}
+        onClick={() => {
+          naviTabVar(4);
+        }}
+      >
+        친구 추가하기
+      </AddFriendBox>
     </Container>
   );
 };
